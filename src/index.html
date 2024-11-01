@@ -43,6 +43,10 @@
       reader.readAsDataURL(file);
     }
 
+    function clean() {
+      document.getElementById("imagePath").innerHTML = "";
+    }
+
     async function sendUploadRequest(fileName, fileData) {
       return fetch("https://prod-227.westeurope.logic.azure.com:443/workflows/e59ff11fec2642cdbaa372c7b550157b/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=yHuuD3hxd9I-iHTpp0YTJoo45uiLPzRUwH0oFRZmql0", {
         method: 'POST',
@@ -58,7 +62,9 @@
       .then(response => response.json())
       .then(data => {
         if (data.status === "Uploaded") {
-          return data.path;
+          var message = "The image has been uploaded correctly!!";
+          clean();
+          return message;
         } else {
           throw new Error("Upload failed");
         }
