@@ -1,17 +1,72 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="styles.css">
-  <title>Vanilla JavaScript App</title>
+  <title>Upload Image to Blob</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+  <style>
+    .form-control {
+      margin-bottom: 1rem;
+    }
+    #imagePath {
+      font-weight: bold;
+      margin-top: 1rem;
+    }
+  </style>
 </head>
-
 <body>
-  <main>
-    <h1>Vanilla JavaScript App</h1>
-  </main>
-</body>
+  <div class="container" style="margin-top: 10rem;">
+    <h1>Upload Image to Blob</h1>
+    <form>
+      <div class="mb-3">
+        <label for="imageUpload" class="form-label">Choose an image to upload</label>
+        <input class="form-control" type="file" id="imageUpload">
+      </div>
+      <button type="button" class="btn btn-primary" onclick="uploadBlob()">Upload</button>
+    </form>
+    <p id="imagePath"></p>
+  </div>
 
+  <script>
+    function uploadBlob() {
+      var fileInput = document.getElementById('imageUpload');
+      var file = fileInput.files[0];
+      var reader = new FileReader();
+      reader.onload = async function(event) {
+        var base64Data = event.target.result.split('base64,')[1];
+        var fileName = file.name;
+        var filePath = await sendUploadRequest(fileName, base64Data);
+        document.getElementById('imagePath').innerText = filePath;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    async function sendUploadRequest(fileName, fileData) {
+      return fetch("https://make.powerautomate.com/environments/Default-065f2c45-0dfe-49b9-8f90-8b28475ea731/flows/4a3f8f9e-d115-4865-bcf6-0a07b92bb617", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          "filename": fileName,
+          "base64data": fileData
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.status === "Uploaded") {
+          return data.path;
+        } else {
+          throw new Error("Upload failed");
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        return null;
+      });
+    }
+  </script>
+</body>
 </html>
