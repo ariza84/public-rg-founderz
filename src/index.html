@@ -44,10 +44,11 @@
     }
 
     async function sendUploadRequest(fileName, fileData) {
-      return fetch("https://make.powerautomate.com/environments/Default-065f2c45-0dfe-49b9-8f90-8b28475ea731/flows/4a3f8f9e-d115-4865-bcf6-0a07b92bb617", {
+      return fetch("https://prod-227.westeurope.logic.azure.com:443/workflows/e59ff11fec2642cdbaa372c7b550157b/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=yHuuD3hxd9I-iHTpp0YTJoo45uiLPzRUwH0oFRZmql0", {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*'
         },
         body: JSON.stringify({
           "filename": fileName,
