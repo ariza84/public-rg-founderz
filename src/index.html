@@ -14,14 +14,18 @@
       font-weight: bold;
       margin-top: 1rem;
     }
+    #formats {
+      font-weight: bold;
+      display: inline;
+    }
   </style>
 </head>
 <body>
   <div class="container" style="margin-top: 10rem;">
-    <h1>Upload Image to Blob</h1>
+    <h1>Upload Image to Blob: Public space</h1>
     <form>
       <div class="mb-3">
-        <label for="imageUpload" class="form-label">Choose an image to upload</label>
+        <label for="imageUpload" class="form-label">Choose an image to upload. The allowed formats are:</label><p id="formats"> Microsoft Word, Microsoft PowerPoint, Microsoft Excel, Adobe PDF, PNG, RTF, JSON, HTML and XML.</p>
         <input class="form-control" type="file" id="imageUpload">
       </div>
       <button type="button" class="btn btn-primary" onclick="uploadBlob()">Upload</button>
@@ -43,10 +47,6 @@
       reader.readAsDataURL(file);
     }
 
-    function clean() {
-      document.getElementById("imagePath").innerHTML = "";
-    }
-
     async function sendUploadRequest(fileName, fileData) {
       return fetch("https://prod-227.westeurope.logic.azure.com:443/workflows/e59ff11fec2642cdbaa372c7b550157b/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=yHuuD3hxd9I-iHTpp0YTJoo45uiLPzRUwH0oFRZmql0", {
         method: 'POST',
@@ -63,7 +63,7 @@
       .then(data => {
         if (data.status === "Uploaded") {
           var message = "The image has been uploaded correctly!!";
-          clean();
+          document.getElementById("imageUpload").value = "";
           return message;
         } else {
           throw new Error("Upload failed");
